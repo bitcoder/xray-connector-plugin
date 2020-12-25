@@ -9,17 +9,21 @@ on:
     branches: [ develop ]
   pull_request:
     branches: [ develop ]
-
+    
 jobs:
   build:
     runs-on: ubuntu-latest
-        
+    strategy:
+      matrix:
+        java_version: [1.8, 11]
+            
     steps:
     - uses: actions/checkout@v2
     - name: Set up Java
       uses: actions/setup-java@v1
       with:
-        java-version: '1.8'  
+        java-version: ${{ java_version }}
+        
     - name: Cache Maven packages
       uses: actions/cache@v2
       with:
