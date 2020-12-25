@@ -25,9 +25,7 @@ jobs:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
-    - name: Build with Maven
-      run: mvn clean compile test --file pom.xml
-    - name: Package with Maven
+    - name: Build and package with Maven
       run: mvn -B package --file pom.xml
     - name: Submit results to Xray
       uses: mikepenz/xray-action@v0.9.4
@@ -36,4 +34,4 @@ jobs:
         password: ${{ secrets.client_secret }}
         testFormat: "junit"
         testPaths: "**/surefire-reports/*.xml"
-        projectKey: "CALC"
+        projectKey: ${{ secrets.jira_project }}
