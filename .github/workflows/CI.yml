@@ -1,7 +1,8 @@
 # This workflow will build a Java project with Maven
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+# https://www.jenkins.io/doc/administration/requirements/java/
 
-name: CI (Jira cloud with GH action)
+name: CI (Jira server and Jira cloud)
 
 on:
   push:
@@ -27,11 +28,25 @@ jobs:
         restore-keys: ${{ runner.os }}-m2
     - name: Build and package with Maven
       run: mvn -B package --file pom.xml
-    - name: Submit results to Xray
+      
+  xray:
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - name: Submit results to Xray server/DC
+      env:
+        JIRA_SERVER_URL: ${{ secrets.jira_server_url }}  
+        JIRA_USERNAME: ${{ secrets.jira_username }}  
+        JIRA_PASSWORD: ${{ secrets.jira_password }}
+        JIRA_PROJECT_KEY: ${{ secrets.jira_project_key }}
+      run: 'curl -H "Content-Type: multipart/form-data" -u $JIRA_USERNAME:$JIRA_PASSWORD -F "file=@target/surefire-reports/TEST-com.xpand.java.CalcTest.xml" "$JIRA_SERVER_URL/rest/raven/1.0/import/execution/junit?projectKey=$JIRA_PROJECT_KEY"'
+
+    - name: Submit results to Xray Cloud
       uses: mikepenz/xray-action@v0.9.4
       with:
         username: ${{ secrets.client_id }}
         password: ${{ secrets.client_secret }}
         testFormat: "junit"
         testPaths: "**/surefire-reports/*.xml"
-        projectKey: ${{ secrets.jira_project }}
+        projectKey: ${{ secrets.jira_project_key }}
