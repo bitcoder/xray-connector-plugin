@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>3.43</version>
+		<version>3.44</version>
 		<relativePath />
 	</parent>
 
@@ -18,7 +18,9 @@
 		<!-- Minimum Supported jenkins version: 2.138.4 (Copied from parent Maven) -->
 		<java.level>8</java.level>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<powermock.version>1.6.1</powermock.version>
+		<powermock.version>2.0.9</powermock.version>
+		<mockito.version>3.3.3</mockito.version>
+		<jenkins.version>2.164.3</jenkins.version>
 	</properties>
 
 	<name>Xray - Test Management for Jira Plugin</name>
@@ -125,8 +127,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.10.8</version>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -142,10 +144,31 @@
 		</dependency>
 		<dependency>
 			<groupId>org.powermock</groupId>
-			<artifactId>powermock-api-mockito</artifactId>
+			<artifactId>powermock-api-mockito2</artifactId>
 			<version>${powermock.version}</version>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.objenesis</groupId>
+			<artifactId>objenesis</artifactId>
+			<version>3.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>net.bytebuddy</groupId>
+			<artifactId>byte-buddy</artifactId>
+			<version>1.10.19</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.bytebuddy</groupId>
+			<artifactId>byte-buddy-agent</artifactId>
+			<version>1.10.19</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<dependencyManagement>
@@ -161,9 +184,12 @@
 	<build>
 	 	<plugins>
 	        <plugin>
-	          <groupId>org.apache.maven.plugins</groupId>
-	          <artifactId>maven-surefire-plugin</artifactId>
-	          <version>2.19.1</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19.1</version>
+				<configuration>
+					<argLine>--add-opens java.xml/jdk.xml.internal=ALL-UNNAMED</argLine>
+				</configuration>
 	        </plugin>
         </plugins>
 	</build>

@@ -32,3 +32,5 @@ launchJenkins.bat
 .project
 xray-connector.iml
 .DS_Store
+.vscode/
+.factorypath
